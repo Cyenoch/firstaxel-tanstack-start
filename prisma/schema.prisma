@@ -1,0 +1,108 @@
+// generator client {
+//   provider        = "prisma-client"
+//   output          = "../src/database/generated/client"
+//   previewFeatures = ["driverAdapters"]
+// }
+
+datasource db {
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+
+generator drizzle {
+  provider = "prisma-generator-drizzle"
+  // Specify the output file (or directory)
+  output          = "../src/database/drizzle/index.ts"
+}
+
+model Session {
+  id                String   @id @default(cuid())
+  userId            String   @map("user_id")
+  expiresAt         DateTime @map("expires_at")
+  twoFactorVerified Boolean  @default(false) @map("two_factor_verified")
+  User              User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId])
+}
+
+model EmailVerificationRequest {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  email     String
+  code      String
+  expiresAt DateTime @map("expires_at")
+  User      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId])
+}
+
+model PasswordResetSession {
+  id                String   @id @default(cuid())
+  userId            String   @map("user_id")
+  email             String
+  code              String
+  expiresAt         DateTime @map("expires_at")
+  emailVerified     Boolean  @default(false) @map("email_verified")
+  twoFactorVerified Boolean  @default(false) @map("two_factor_verified")
+  User              User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId])
+}
+
+model TotpCredential {
+  id     Int    @id @default(autoincrement())
+  userId String @unique @map("user_id")
+  key    Bytes  @map("key")
+  User   User   @relation(fields: [userId], references: [id])
+}
+
+model PasskeyCredential {
+  id        String @id @default(cuid())
+  userId    String @map("user_id")
+  name      String
+  algorithm Int
+  publicKey Bytes  @map("public_key")
+
+  User User @relation(fields: [userId], references: [id])
+
+  @@unique([userId])
+}
+
+model SecurityKeyCredential {
+  id        String @id @default(cuid())
+  userId    String @map("user_id")
+  name      String
+  algorithm Int
+  publicKey Bytes  @map("public_key")
+  User      User   @relation(fields: [userId], references: [id])
+
+  @@unique([userId])
+}
+
+model User {
+  id                       String                     @id @default(cuid())
+  email                    String
+  emailVerified            Boolean @default(false)
+  firstname                String
+  lastname                 String
+  passWordHash             String
+  recoveryCode             Bytes?
+  profilePic               String?
+  registeredTOTP           Boolean?
+  registeredRecoveryCode   Boolean?
+  registeredSecurityKey    Boolean?
+  registeredPasskey        Boolean?
+  registered2FA            Boolean?
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  Session                  Session[]
+  EmailVerificationRequest EmailVerificationRequest[]
+  PasswordResetSession     PasswordResetSession[]
+  TotpCredential           TotpCredential?
+  PasskeyCredential        PasskeyCredential[]
+  SecurityKeyCredential    SecurityKeyCredential[]
+
+  @@index([email])
+}
