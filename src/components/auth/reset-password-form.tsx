@@ -1,4 +1,4 @@
-import { useAppForm } from "@/hooks/demo.form";
+import { useAppForm } from "@/hooks/form";
 import { verifyPasswordStrength } from "@/lib/auth/server/password";
 import {
 	deletePasswordResetSessionTokenCookie,

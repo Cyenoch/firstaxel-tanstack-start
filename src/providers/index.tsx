@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { ThemeProvider } from "./theme-provider";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
 	useEffect(() => {
@@ -7,7 +6,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 			return;
 		}
 	}, []);
-	return <ThemeProvider>{children}</ThemeProvider>;
+	return <>{children}</>;
 };
 
 export default Providers;

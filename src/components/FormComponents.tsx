@@ -1,6 +1,6 @@
 import { useStore } from "@tanstack/react-form";
 
-import { useFieldContext, useFormContext } from "../hooks/demo.form-context";
+import { useFieldContext, useFormContext } from "../hooks/form-context";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -73,16 +73,10 @@ export const OTPInput = ({
 				render={({ slots }) => (
 					<>
 						<div className="flex gap-2">
-							{slots.slice(0, 4).map((slot, idx) => (
-								<Slot key={idx} {...slot} />
-							))}
-						</div>
-
-						<FakeDash />
-
-						<div className="flex gap-2">
-							{slots.slice(4).map((slot, idx) => (
-								<Slot key={idx} {...slot} />
+							{slots.map((slot, idx) => (
+								// TODO: Fix this error
+								// biome-ignore lint/suspicious/noArrayIndexKey: <needed to use array index>
+								<Slot key={idx} {...slot} hasFakeCaret />
 							))}
 						</div>
 					</>
@@ -160,6 +154,7 @@ export function PasswordField({
 					placeholder={placeholder}
 					onBlur={field.handleBlur}
 					onChange={(e) => field.handleChange(e.target.value)}
+					autoComplete="current-password"
 				/>
 			) : (
 				<Password
@@ -288,14 +283,15 @@ function Slot(props: SlotProps) {
 			)}
 		>
 			{props.char !== null && <div>{props.char}</div>}
+			{props.hasFakeCaret && <FakeCaret />}
 		</div>
 	);
 }
 
-function FakeDash() {
+function FakeCaret() {
 	return (
-		<div className="flex w-10 justify-center items-center">
-			<div className="w-3 h-1 rounded-full bg-border" />
+		<div className="absolute pointer-events-none inset-0 flex items-center justify-center animate-caret-blink">
+			<div className="w-px h-8 bg-white" />
 		</div>
 	);
 }

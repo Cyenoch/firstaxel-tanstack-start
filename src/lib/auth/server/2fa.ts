@@ -23,13 +23,7 @@ export const getAllUser2FA = async (userId: string) => {
 			registeredSecurityKey: true,
 		},
 	});
-
-	if (!data) {
-		return {};
-	}
-
-	const twoFactorArray = Object.keys(data).filter((item) => item !== null); // Filter out null values
-	return twoFactorArray;
+	return data;
 };
 
 export async function resetUser2FAWithRecoveryCode(

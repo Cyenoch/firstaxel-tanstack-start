@@ -7,7 +7,7 @@ export const Route = createFileRoute("/auth")({
 
 function RouteComponent() {
 	return (
-		<section className="flex h-full items-center justify-center bg-zinc-50 px-4 py-12 md:min-h-screen dark:bg-transparent">
+		<section className="flex h-screen items-center justify-center bg-zinc-50 px-4 py-12 md:min-h-full dark:bg-transparent">
 			<Outlet />
 		</section>
 	);

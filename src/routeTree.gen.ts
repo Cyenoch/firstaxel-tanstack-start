@@ -13,21 +13,17 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth/route'
 import { Route as IndexImport } from './routes/index'
-import { Route as AuthIndexImport } from './routes/auth/index'
-import { Route as DemoTanstackQueryImport } from './routes/demo.tanstack-query'
-import { Route as DemoStoreImport } from './routes/demo.store'
-import { Route as DemoConvexImport } from './routes/demo.convex'
 import { Route as AuthVerifyEmailIndexImport } from './routes/auth/verify-email/index'
+import { Route as AuthTwoFactorIndexImport } from './routes/auth/twoFactor/index'
 import { Route as AuthResetPasswordIndexImport } from './routes/auth/reset-password/index'
 import { Route as AuthRegisterIndexImport } from './routes/auth/register/index'
 import { Route as AuthLoginIndexImport } from './routes/auth/login/index'
 import { Route as AuthForgotPasswordIndexImport } from './routes/auth/forgot-password/index'
-import { Route as DemoStartServerFuncsImport } from './routes/demo.start.server-funcs'
-import { Route as DemoStartApiRequestImport } from './routes/demo.start.api-request'
-import { Route as DemoFormSimpleImport } from './routes/demo.form.simple'
-import { Route as DemoFormAddressImport } from './routes/demo.form.address'
+import { Route as AuthTwoFactorTotpIndexImport } from './routes/auth/twoFactor/totp/index'
 import { Route as AuthTwoFactorSetupIndexImport } from './routes/auth/twoFactor/setup/index'
+import { Route as AuthTwoFactorSecurityKeyIndexImport } from './routes/auth/twoFactor/security-key/index'
 import { Route as AuthTwoFactorResetIndexImport } from './routes/auth/twoFactor/reset/index'
+import { Route as AuthTwoFactorPasskeyIndexImport } from './routes/auth/twoFactor/passkey/index'
 import { Route as AuthResetPasswordVerifyEmailIndexImport } from './routes/auth/reset-password/verify-email/index'
 import { Route as AuthResetPasswordTwoFactorIndexImport } from './routes/auth/reset-password/twoFactor/index'
 import { Route as AuthTwoFactorTotpSetupIndexImport } from './routes/auth/twoFactor/totp/setup/index'
@@ -48,33 +44,15 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthIndexRoute = AuthIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthRouteRoute,
-} as any)
-
-const DemoTanstackQueryRoute = DemoTanstackQueryImport.update({
-  id: '/demo/tanstack-query',
-  path: '/demo/tanstack-query',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const DemoStoreRoute = DemoStoreImport.update({
-  id: '/demo/store',
-  path: '/demo/store',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const DemoConvexRoute = DemoConvexImport.update({
-  id: '/demo/convex',
-  path: '/demo/convex',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const AuthVerifyEmailIndexRoute = AuthVerifyEmailIndexImport.update({
   id: '/verify-email/',
   path: '/verify-email/',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+
+const AuthTwoFactorIndexRoute = AuthTwoFactorIndexImport.update({
+  id: '/twoFactor/',
+  path: '/twoFactor/',
   getParentRoute: () => AuthRouteRoute,
 } as any)
 
@@ -102,28 +80,10 @@ const AuthForgotPasswordIndexRoute = AuthForgotPasswordIndexImport.update({
   getParentRoute: () => AuthRouteRoute,
 } as any)
 
-const DemoStartServerFuncsRoute = DemoStartServerFuncsImport.update({
-  id: '/demo/start/server-funcs',
-  path: '/demo/start/server-funcs',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const DemoStartApiRequestRoute = DemoStartApiRequestImport.update({
-  id: '/demo/start/api-request',
-  path: '/demo/start/api-request',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const DemoFormSimpleRoute = DemoFormSimpleImport.update({
-  id: '/demo/form/simple',
-  path: '/demo/form/simple',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const DemoFormAddressRoute = DemoFormAddressImport.update({
-  id: '/demo/form/address',
-  path: '/demo/form/address',
-  getParentRoute: () => rootRoute,
+const AuthTwoFactorTotpIndexRoute = AuthTwoFactorTotpIndexImport.update({
+  id: '/twoFactor/totp/',
+  path: '/twoFactor/totp/',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 
 const AuthTwoFactorSetupIndexRoute = AuthTwoFactorSetupIndexImport.update({
@@ -132,9 +92,22 @@ const AuthTwoFactorSetupIndexRoute = AuthTwoFactorSetupIndexImport.update({
   getParentRoute: () => AuthRouteRoute,
 } as any)
 
+const AuthTwoFactorSecurityKeyIndexRoute =
+  AuthTwoFactorSecurityKeyIndexImport.update({
+    id: '/twoFactor/security-key/',
+    path: '/twoFactor/security-key/',
+    getParentRoute: () => AuthRouteRoute,
+  } as any)
+
 const AuthTwoFactorResetIndexRoute = AuthTwoFactorResetIndexImport.update({
   id: '/twoFactor/reset/',
   path: '/twoFactor/reset/',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+
+const AuthTwoFactorPasskeyIndexRoute = AuthTwoFactorPasskeyIndexImport.update({
+  id: '/twoFactor/passkey/',
+  path: '/twoFactor/passkey/',
   getParentRoute: () => AuthRouteRoute,
 } as any)
 
@@ -191,62 +164,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRoute
     }
-    '/demo/convex': {
-      id: '/demo/convex'
-      path: '/demo/convex'
-      fullPath: '/demo/convex'
-      preLoaderRoute: typeof DemoConvexImport
-      parentRoute: typeof rootRoute
-    }
-    '/demo/store': {
-      id: '/demo/store'
-      path: '/demo/store'
-      fullPath: '/demo/store'
-      preLoaderRoute: typeof DemoStoreImport
-      parentRoute: typeof rootRoute
-    }
-    '/demo/tanstack-query': {
-      id: '/demo/tanstack-query'
-      path: '/demo/tanstack-query'
-      fullPath: '/demo/tanstack-query'
-      preLoaderRoute: typeof DemoTanstackQueryImport
-      parentRoute: typeof rootRoute
-    }
-    '/auth/': {
-      id: '/auth/'
-      path: '/'
-      fullPath: '/auth/'
-      preLoaderRoute: typeof AuthIndexImport
-      parentRoute: typeof AuthRouteImport
-    }
-    '/demo/form/address': {
-      id: '/demo/form/address'
-      path: '/demo/form/address'
-      fullPath: '/demo/form/address'
-      preLoaderRoute: typeof DemoFormAddressImport
-      parentRoute: typeof rootRoute
-    }
-    '/demo/form/simple': {
-      id: '/demo/form/simple'
-      path: '/demo/form/simple'
-      fullPath: '/demo/form/simple'
-      preLoaderRoute: typeof DemoFormSimpleImport
-      parentRoute: typeof rootRoute
-    }
-    '/demo/start/api-request': {
-      id: '/demo/start/api-request'
-      path: '/demo/start/api-request'
-      fullPath: '/demo/start/api-request'
-      preLoaderRoute: typeof DemoStartApiRequestImport
-      parentRoute: typeof rootRoute
-    }
-    '/demo/start/server-funcs': {
-      id: '/demo/start/server-funcs'
-      path: '/demo/start/server-funcs'
-      fullPath: '/demo/start/server-funcs'
-      preLoaderRoute: typeof DemoStartServerFuncsImport
-      parentRoute: typeof rootRoute
-    }
     '/auth/forgot-password/': {
       id: '/auth/forgot-password/'
       path: '/forgot-password'
@@ -275,6 +192,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordIndexImport
       parentRoute: typeof AuthRouteImport
     }
+    '/auth/twoFactor/': {
+      id: '/auth/twoFactor/'
+      path: '/twoFactor'
+      fullPath: '/auth/twoFactor'
+      preLoaderRoute: typeof AuthTwoFactorIndexImport
+      parentRoute: typeof AuthRouteImport
+    }
     '/auth/verify-email/': {
       id: '/auth/verify-email/'
       path: '/verify-email'
@@ -296,6 +220,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordVerifyEmailIndexImport
       parentRoute: typeof AuthRouteImport
     }
+    '/auth/twoFactor/passkey/': {
+      id: '/auth/twoFactor/passkey/'
+      path: '/twoFactor/passkey'
+      fullPath: '/auth/twoFactor/passkey'
+      preLoaderRoute: typeof AuthTwoFactorPasskeyIndexImport
+      parentRoute: typeof AuthRouteImport
+    }
     '/auth/twoFactor/reset/': {
       id: '/auth/twoFactor/reset/'
       path: '/twoFactor/reset'
@@ -303,11 +234,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthTwoFactorResetIndexImport
       parentRoute: typeof AuthRouteImport
     }
+    '/auth/twoFactor/security-key/': {
+      id: '/auth/twoFactor/security-key/'
+      path: '/twoFactor/security-key'
+      fullPath: '/auth/twoFactor/security-key'
+      preLoaderRoute: typeof AuthTwoFactorSecurityKeyIndexImport
+      parentRoute: typeof AuthRouteImport
+    }
     '/auth/twoFactor/setup/': {
       id: '/auth/twoFactor/setup/'
       path: '/twoFactor/setup'
       fullPath: '/auth/twoFactor/setup'
       preLoaderRoute: typeof AuthTwoFactorSetupIndexImport
+      parentRoute: typeof AuthRouteImport
+    }
+    '/auth/twoFactor/totp/': {
+      id: '/auth/twoFactor/totp/'
+      path: '/twoFactor/totp'
+      fullPath: '/auth/twoFactor/totp'
+      preLoaderRoute: typeof AuthTwoFactorTotpIndexImport
       parentRoute: typeof AuthRouteImport
     }
     '/auth/twoFactor/passkey/register/': {
@@ -337,33 +282,39 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AuthRouteRouteChildren {
-  AuthIndexRoute: typeof AuthIndexRoute
   AuthForgotPasswordIndexRoute: typeof AuthForgotPasswordIndexRoute
   AuthLoginIndexRoute: typeof AuthLoginIndexRoute
   AuthRegisterIndexRoute: typeof AuthRegisterIndexRoute
   AuthResetPasswordIndexRoute: typeof AuthResetPasswordIndexRoute
+  AuthTwoFactorIndexRoute: typeof AuthTwoFactorIndexRoute
   AuthVerifyEmailIndexRoute: typeof AuthVerifyEmailIndexRoute
   AuthResetPasswordTwoFactorIndexRoute: typeof AuthResetPasswordTwoFactorIndexRoute
   AuthResetPasswordVerifyEmailIndexRoute: typeof AuthResetPasswordVerifyEmailIndexRoute
+  AuthTwoFactorPasskeyIndexRoute: typeof AuthTwoFactorPasskeyIndexRoute
   AuthTwoFactorResetIndexRoute: typeof AuthTwoFactorResetIndexRoute
+  AuthTwoFactorSecurityKeyIndexRoute: typeof AuthTwoFactorSecurityKeyIndexRoute
   AuthTwoFactorSetupIndexRoute: typeof AuthTwoFactorSetupIndexRoute
+  AuthTwoFactorTotpIndexRoute: typeof AuthTwoFactorTotpIndexRoute
   AuthTwoFactorPasskeyRegisterIndexRoute: typeof AuthTwoFactorPasskeyRegisterIndexRoute
   AuthTwoFactorSecurityKeyRegisterIndexRoute: typeof AuthTwoFactorSecurityKeyRegisterIndexRoute
   AuthTwoFactorTotpSetupIndexRoute: typeof AuthTwoFactorTotpSetupIndexRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
-  AuthIndexRoute: AuthIndexRoute,
   AuthForgotPasswordIndexRoute: AuthForgotPasswordIndexRoute,
   AuthLoginIndexRoute: AuthLoginIndexRoute,
   AuthRegisterIndexRoute: AuthRegisterIndexRoute,
   AuthResetPasswordIndexRoute: AuthResetPasswordIndexRoute,
+  AuthTwoFactorIndexRoute: AuthTwoFactorIndexRoute,
   AuthVerifyEmailIndexRoute: AuthVerifyEmailIndexRoute,
   AuthResetPasswordTwoFactorIndexRoute: AuthResetPasswordTwoFactorIndexRoute,
   AuthResetPasswordVerifyEmailIndexRoute:
     AuthResetPasswordVerifyEmailIndexRoute,
+  AuthTwoFactorPasskeyIndexRoute: AuthTwoFactorPasskeyIndexRoute,
   AuthTwoFactorResetIndexRoute: AuthTwoFactorResetIndexRoute,
+  AuthTwoFactorSecurityKeyIndexRoute: AuthTwoFactorSecurityKeyIndexRoute,
   AuthTwoFactorSetupIndexRoute: AuthTwoFactorSetupIndexRoute,
+  AuthTwoFactorTotpIndexRoute: AuthTwoFactorTotpIndexRoute,
   AuthTwoFactorPasskeyRegisterIndexRoute:
     AuthTwoFactorPasskeyRegisterIndexRoute,
   AuthTwoFactorSecurityKeyRegisterIndexRoute:
@@ -378,23 +329,19 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteRouteWithChildren
-  '/demo/convex': typeof DemoConvexRoute
-  '/demo/store': typeof DemoStoreRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/auth/': typeof AuthIndexRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
-  '/demo/start/api-request': typeof DemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
   '/auth/register': typeof AuthRegisterIndexRoute
   '/auth/reset-password': typeof AuthResetPasswordIndexRoute
+  '/auth/twoFactor': typeof AuthTwoFactorIndexRoute
   '/auth/verify-email': typeof AuthVerifyEmailIndexRoute
   '/auth/reset-password/twoFactor': typeof AuthResetPasswordTwoFactorIndexRoute
   '/auth/reset-password/verify-email': typeof AuthResetPasswordVerifyEmailIndexRoute
+  '/auth/twoFactor/passkey': typeof AuthTwoFactorPasskeyIndexRoute
   '/auth/twoFactor/reset': typeof AuthTwoFactorResetIndexRoute
+  '/auth/twoFactor/security-key': typeof AuthTwoFactorSecurityKeyIndexRoute
   '/auth/twoFactor/setup': typeof AuthTwoFactorSetupIndexRoute
+  '/auth/twoFactor/totp': typeof AuthTwoFactorTotpIndexRoute
   '/auth/twoFactor/passkey/register': typeof AuthTwoFactorPasskeyRegisterIndexRoute
   '/auth/twoFactor/security-key/register': typeof AuthTwoFactorSecurityKeyRegisterIndexRoute
   '/auth/twoFactor/totp/setup': typeof AuthTwoFactorTotpSetupIndexRoute
@@ -402,23 +349,20 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/demo/convex': typeof DemoConvexRoute
-  '/demo/store': typeof DemoStoreRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/auth': typeof AuthIndexRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
-  '/demo/start/api-request': typeof DemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/auth': typeof AuthRouteRouteWithChildren
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
   '/auth/register': typeof AuthRegisterIndexRoute
   '/auth/reset-password': typeof AuthResetPasswordIndexRoute
+  '/auth/twoFactor': typeof AuthTwoFactorIndexRoute
   '/auth/verify-email': typeof AuthVerifyEmailIndexRoute
   '/auth/reset-password/twoFactor': typeof AuthResetPasswordTwoFactorIndexRoute
   '/auth/reset-password/verify-email': typeof AuthResetPasswordVerifyEmailIndexRoute
+  '/auth/twoFactor/passkey': typeof AuthTwoFactorPasskeyIndexRoute
   '/auth/twoFactor/reset': typeof AuthTwoFactorResetIndexRoute
+  '/auth/twoFactor/security-key': typeof AuthTwoFactorSecurityKeyIndexRoute
   '/auth/twoFactor/setup': typeof AuthTwoFactorSetupIndexRoute
+  '/auth/twoFactor/totp': typeof AuthTwoFactorTotpIndexRoute
   '/auth/twoFactor/passkey/register': typeof AuthTwoFactorPasskeyRegisterIndexRoute
   '/auth/twoFactor/security-key/register': typeof AuthTwoFactorSecurityKeyRegisterIndexRoute
   '/auth/twoFactor/totp/setup': typeof AuthTwoFactorTotpSetupIndexRoute
@@ -428,23 +372,19 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteRouteWithChildren
-  '/demo/convex': typeof DemoConvexRoute
-  '/demo/store': typeof DemoStoreRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/auth/': typeof AuthIndexRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
-  '/demo/start/api-request': typeof DemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
   '/auth/login/': typeof AuthLoginIndexRoute
   '/auth/register/': typeof AuthRegisterIndexRoute
   '/auth/reset-password/': typeof AuthResetPasswordIndexRoute
+  '/auth/twoFactor/': typeof AuthTwoFactorIndexRoute
   '/auth/verify-email/': typeof AuthVerifyEmailIndexRoute
   '/auth/reset-password/twoFactor/': typeof AuthResetPasswordTwoFactorIndexRoute
   '/auth/reset-password/verify-email/': typeof AuthResetPasswordVerifyEmailIndexRoute
+  '/auth/twoFactor/passkey/': typeof AuthTwoFactorPasskeyIndexRoute
   '/auth/twoFactor/reset/': typeof AuthTwoFactorResetIndexRoute
+  '/auth/twoFactor/security-key/': typeof AuthTwoFactorSecurityKeyIndexRoute
   '/auth/twoFactor/setup/': typeof AuthTwoFactorSetupIndexRoute
+  '/auth/twoFactor/totp/': typeof AuthTwoFactorTotpIndexRoute
   '/auth/twoFactor/passkey/register/': typeof AuthTwoFactorPasskeyRegisterIndexRoute
   '/auth/twoFactor/security-key/register/': typeof AuthTwoFactorSecurityKeyRegisterIndexRoute
   '/auth/twoFactor/totp/setup/': typeof AuthTwoFactorTotpSetupIndexRoute
@@ -455,46 +395,39 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
-    | '/demo/convex'
-    | '/demo/store'
-    | '/demo/tanstack-query'
-    | '/auth/'
-    | '/demo/form/address'
-    | '/demo/form/simple'
-    | '/demo/start/api-request'
-    | '/demo/start/server-funcs'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
+    | '/auth/twoFactor'
     | '/auth/verify-email'
     | '/auth/reset-password/twoFactor'
     | '/auth/reset-password/verify-email'
+    | '/auth/twoFactor/passkey'
     | '/auth/twoFactor/reset'
+    | '/auth/twoFactor/security-key'
     | '/auth/twoFactor/setup'
+    | '/auth/twoFactor/totp'
     | '/auth/twoFactor/passkey/register'
     | '/auth/twoFactor/security-key/register'
     | '/auth/twoFactor/totp/setup'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/demo/convex'
-    | '/demo/store'
-    | '/demo/tanstack-query'
     | '/auth'
-    | '/demo/form/address'
-    | '/demo/form/simple'
-    | '/demo/start/api-request'
-    | '/demo/start/server-funcs'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
+    | '/auth/twoFactor'
     | '/auth/verify-email'
     | '/auth/reset-password/twoFactor'
     | '/auth/reset-password/verify-email'
+    | '/auth/twoFactor/passkey'
     | '/auth/twoFactor/reset'
+    | '/auth/twoFactor/security-key'
     | '/auth/twoFactor/setup'
+    | '/auth/twoFactor/totp'
     | '/auth/twoFactor/passkey/register'
     | '/auth/twoFactor/security-key/register'
     | '/auth/twoFactor/totp/setup'
@@ -502,23 +435,19 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
-    | '/demo/convex'
-    | '/demo/store'
-    | '/demo/tanstack-query'
-    | '/auth/'
-    | '/demo/form/address'
-    | '/demo/form/simple'
-    | '/demo/start/api-request'
-    | '/demo/start/server-funcs'
     | '/auth/forgot-password/'
     | '/auth/login/'
     | '/auth/register/'
     | '/auth/reset-password/'
+    | '/auth/twoFactor/'
     | '/auth/verify-email/'
     | '/auth/reset-password/twoFactor/'
     | '/auth/reset-password/verify-email/'
+    | '/auth/twoFactor/passkey/'
     | '/auth/twoFactor/reset/'
+    | '/auth/twoFactor/security-key/'
     | '/auth/twoFactor/setup/'
+    | '/auth/twoFactor/totp/'
     | '/auth/twoFactor/passkey/register/'
     | '/auth/twoFactor/security-key/register/'
     | '/auth/twoFactor/totp/setup/'
@@ -528,25 +457,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
-  DemoConvexRoute: typeof DemoConvexRoute
-  DemoStoreRoute: typeof DemoStoreRoute
-  DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
-  DemoFormAddressRoute: typeof DemoFormAddressRoute
-  DemoFormSimpleRoute: typeof DemoFormSimpleRoute
-  DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
-  DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
-  DemoConvexRoute: DemoConvexRoute,
-  DemoStoreRoute: DemoStoreRoute,
-  DemoTanstackQueryRoute: DemoTanstackQueryRoute,
-  DemoFormAddressRoute: DemoFormAddressRoute,
-  DemoFormSimpleRoute: DemoFormSimpleRoute,
-  DemoStartApiRequestRoute: DemoStartApiRequestRoute,
-  DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
 }
 
 export const routeTree = rootRoute
@@ -560,14 +475,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/auth",
-        "/demo/convex",
-        "/demo/store",
-        "/demo/tanstack-query",
-        "/demo/form/address",
-        "/demo/form/simple",
-        "/demo/start/api-request",
-        "/demo/start/server-funcs"
+        "/auth"
       ]
     },
     "/": {
@@ -576,45 +484,23 @@ export const routeTree = rootRoute
     "/auth": {
       "filePath": "auth/route.tsx",
       "children": [
-        "/auth/",
         "/auth/forgot-password/",
         "/auth/login/",
         "/auth/register/",
         "/auth/reset-password/",
+        "/auth/twoFactor/",
         "/auth/verify-email/",
         "/auth/reset-password/twoFactor/",
         "/auth/reset-password/verify-email/",
+        "/auth/twoFactor/passkey/",
         "/auth/twoFactor/reset/",
+        "/auth/twoFactor/security-key/",
         "/auth/twoFactor/setup/",
+        "/auth/twoFactor/totp/",
         "/auth/twoFactor/passkey/register/",
         "/auth/twoFactor/security-key/register/",
         "/auth/twoFactor/totp/setup/"
       ]
-    },
-    "/demo/convex": {
-      "filePath": "demo.convex.tsx"
-    },
-    "/demo/store": {
-      "filePath": "demo.store.tsx"
-    },
-    "/demo/tanstack-query": {
-      "filePath": "demo.tanstack-query.tsx"
-    },
-    "/auth/": {
-      "filePath": "auth/index.tsx",
-      "parent": "/auth"
-    },
-    "/demo/form/address": {
-      "filePath": "demo.form.address.tsx"
-    },
-    "/demo/form/simple": {
-      "filePath": "demo.form.simple.tsx"
-    },
-    "/demo/start/api-request": {
-      "filePath": "demo.start.api-request.tsx"
-    },
-    "/demo/start/server-funcs": {
-      "filePath": "demo.start.server-funcs.tsx"
     },
     "/auth/forgot-password/": {
       "filePath": "auth/forgot-password/index.tsx",
@@ -632,6 +518,10 @@ export const routeTree = rootRoute
       "filePath": "auth/reset-password/index.tsx",
       "parent": "/auth"
     },
+    "/auth/twoFactor/": {
+      "filePath": "auth/twoFactor/index.tsx",
+      "parent": "/auth"
+    },
     "/auth/verify-email/": {
       "filePath": "auth/verify-email/index.tsx",
       "parent": "/auth"
@@ -644,12 +534,24 @@ export const routeTree = rootRoute
       "filePath": "auth/reset-password/verify-email/index.tsx",
       "parent": "/auth"
     },
+    "/auth/twoFactor/passkey/": {
+      "filePath": "auth/twoFactor/passkey/index.tsx",
+      "parent": "/auth"
+    },
     "/auth/twoFactor/reset/": {
       "filePath": "auth/twoFactor/reset/index.tsx",
       "parent": "/auth"
     },
+    "/auth/twoFactor/security-key/": {
+      "filePath": "auth/twoFactor/security-key/index.tsx",
+      "parent": "/auth"
+    },
     "/auth/twoFactor/setup/": {
       "filePath": "auth/twoFactor/setup/index.tsx",
+      "parent": "/auth"
+    },
+    "/auth/twoFactor/totp/": {
+      "filePath": "auth/twoFactor/totp/index.tsx",
       "parent": "/auth"
     },
     "/auth/twoFactor/passkey/register/": {

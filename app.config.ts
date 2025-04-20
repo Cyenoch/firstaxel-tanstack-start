@@ -1,28 +1,18 @@
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "@tanstack/react-start/config";
 import tsConfigPaths from "vite-tsconfig-paths";
-import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
 
 
 export default defineConfig({
   vite: {
+
     plugins: [
       tsConfigPaths({
         projects: ["./tsconfig.json"],
       }),
       tailwindcss(),
     ],
-    optimizeDeps:{
-      esbuildOptions:{
-        plugins:[
-          // @ts-expect-error - esbuild-plugin-node-globals-polyfill is not a valid esbuild plugin
-          NodeGlobalsPolyfillPlugin({
-            buffer: true,
-          }),
-        ],
-      },
 
-    },
 
     define:{
       global: "window",
@@ -52,6 +42,6 @@ export default defineConfig({
 
   server: {
     // https://tanstack.com/start/latest/docs/framework/react/hosting#deployment
-    // preset: "netlify",
+    preset: "vercel",
   },
 });

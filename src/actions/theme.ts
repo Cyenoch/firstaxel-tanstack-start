@@ -9,8 +9,8 @@ export const getThemeSeverFn = createServerFn().handler(async () => {
 });
 
 export const setThemeSeverFn = createServerFn({ method: "POST" })
-	.validator((data: unknown) => {
-		if (typeof data != "string" && (data != "dark" || data != "light"))
+	.validator((data: string | "dark" | "light") => {
+		if (typeof data !== "string" && (data !== "dark" || data !== "light"))
 			throw new Error("Invalid theme provided");
 		return data as Theme;
 	})

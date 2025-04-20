@@ -6,11 +6,23 @@ import {
 import {
 	type WebAuthnUserCredential,
 	createPasskeyCredential,
+	getUserPasskeyCredential,
 	getUserPasskeyCredentials,
 	verifyWebAuthnChallenge,
 } from "@/lib/auth/server/webauthn";
-import { ECDSAPublicKey, p256 } from "@oslojs/crypto/ecdsa";
-import { RSAPublicKey } from "@oslojs/crypto/rsa";
+import {
+	ECDSAPublicKey,
+	decodePKIXECDSASignature,
+	decodeSEC1PublicKey,
+	p256,
+	verifyECDSASignature,
+} from "@oslojs/crypto/ecdsa";
+import {
+	RSAPublicKey,
+	decodePKCS1RSAPublicKey,
+	sha256ObjectIdentifier,
+	verifyRSASSAPKCS1v15Signature,
+} from "@oslojs/crypto/rsa";
 import { decodeBase64 } from "@oslojs/encoding";
 import {
 	AttestationStatementFormat,
@@ -18,13 +30,20 @@ import {
 	coseAlgorithmES256,
 	coseAlgorithmRS256,
 	coseEllipticCurveP256,
+	createAssertionSignatureMessage,
 	parseAttestationObject,
+	parseAuthenticatorData,
 	parseClientDataJSON,
 } from "@oslojs/webauthn";
 
 import { database } from "@/database";
 import { users } from "@/database/drizzle";
-import type { createPasskeyType } from "@/schema/auth/passkey";
+import { getBaseUrl, getDeployer } from "@/lib/utils";
+import type {
+	createPasskeyType,
+	verifyPasskeyType,
+} from "@/schema/auth/passkey";
+import { sha256 } from "@oslojs/crypto/sha2";
 import type {
 	AttestationStatement,
 	AuthenticatorData,
@@ -32,6 +51,7 @@ import type {
 	COSERSAPublicKey,
 	ClientData,
 } from "@oslojs/webauthn";
+import { ObjectParser } from "@pilcrowjs/object-parser";
 import { createError } from "@tanstack/react-start/server";
 import { DrizzleError, eq } from "drizzle-orm";
 
@@ -109,7 +129,7 @@ export async function registerPasskeyAction(data: createPasskeyType) {
 	}
 
 	// TODO: Update host
-	if (!authenticatorData.verifyRelyingPartyIdHash("localhost")) {
+	if (!authenticatorData.verifyRelyingPartyIdHash(getDeployer())) {
 		throw createError({
 			status: 422,
 			message: "Invalid authenticator data",
@@ -151,7 +171,7 @@ export async function registerPasskeyAction(data: createPasskeyType) {
 		});
 	}
 	// TODO: Update origin
-	if (clientData.origin !== "http://localhost:3000") {
+	if (clientData.origin !== getBaseUrl()) {
 		throw createError({
 			status: 422,
 			message: "Invalid client data origin",
@@ -266,6 +286,171 @@ export async function registerPasskeyAction(data: createPasskeyType) {
 
 	return {
 		message: "Passkey creation successful",
+		redirectUrl: "/",
+	};
+}
+
+export async function verify2FAWithPasskeyAction(data: verifyPasskeyType) {
+	if (!globalPOSTRateLimit()) {
+		throw createError({
+			message: "Too many request",
+			status: 429,
+		});
+	}
+
+	const { session, user } = await getCurrentSession();
+	if (session === null || user === null) {
+		throw createError({
+			message: "Not authenticated",
+			status: 401,
+		});
+	}
+	if (
+		!user.emailVerified ||
+		!user.registeredPasskey ||
+		session.twoFactorVerified
+	) {
+		throw createError({
+			message: "Verify your email first",
+			status: 403,
+		});
+	}
+
+	const parser = new ObjectParser(data);
+	let encodedAuthenticatorData: string;
+	let encodedClientDataJSON: string;
+	let encodedCredentialId: string;
+	let encodedSignature: string;
+	try {
+		encodedAuthenticatorData = parser.getString("authenticator_data");
+		encodedClientDataJSON = parser.getString("client_data_json");
+		encodedCredentialId = parser.getString("credential_id");
+		encodedSignature = parser.getString("signature");
+	} catch {
+		throw createError({
+			message: "Invalid or missing fields",
+			statusCode: 400,
+		});
+	}
+	let authenticatorDataBytes: Uint8Array;
+	let clientDataJSON: Uint8Array;
+	let credentialId: Uint8Array;
+	let signatureBytes: Uint8Array;
+	try {
+		authenticatorDataBytes = decodeBase64(encodedAuthenticatorData);
+		clientDataJSON = decodeBase64(encodedClientDataJSON);
+		credentialId = decodeBase64(encodedCredentialId);
+		signatureBytes = decodeBase64(encodedSignature);
+	} catch {
+		throw createError({
+			message: "Invalid or missing fields",
+			statusCode: 400,
+		});
+	}
+
+	let authenticatorData: AuthenticatorData;
+	try {
+		authenticatorData = parseAuthenticatorData(authenticatorDataBytes);
+	} catch {
+		throw createError({
+			message: "Invalid data",
+			statusCode: 400,
+		});
+	}
+	// TODO: Update host
+	if (!authenticatorData.verifyRelyingPartyIdHash(getDeployer())) {
+		throw createError({
+			message: "Invalid data",
+			statusCode: 400,
+		});
+	}
+	if (!authenticatorData.userPresent) {
+		throw createError({
+			message: "Invalid data",
+			statusCode: 400,
+		});
+	}
+
+	let clientData: ClientData;
+	try {
+		clientData = parseClientDataJSON(clientDataJSON);
+	} catch {
+		throw createError({
+			message: "Invalid data",
+			statusCode: 400,
+		});
+	}
+	if (clientData.type !== ClientDataType.Get) {
+		throw createError({
+			message: "Invalid data",
+			statusCode: 400,
+		});
+	}
+
+	if (!verifyWebAuthnChallenge(clientData.challenge)) {
+		throw createError({
+			message: "Invalid data",
+			statusCode: 400,
+		});
+	}
+	// TODO: Update origin
+	if (clientData.origin !== getBaseUrl()) {
+		throw createError({
+			message: "Invalid data",
+			statusCode: 400,
+		});
+	}
+	if (clientData.crossOrigin !== null && clientData.crossOrigin) {
+		throw createError({
+			message: "Invalid data",
+			statusCode: 400,
+		});
+	}
+
+	const credential = await getUserPasskeyCredential(user.id, credentialId);
+	if (credential === null) {
+		throw createError({
+			message: "Invalid credential",
+			statusCode: 400,
+		});
+	}
+
+	let validSignature: boolean;
+	if (credential.algorithm === coseAlgorithmES256) {
+		const ecdsaSignature = decodePKIXECDSASignature(signatureBytes);
+		const ecdsaPublicKey = decodeSEC1PublicKey(p256, credential.publicKey);
+		const hash = sha256(
+			createAssertionSignatureMessage(authenticatorDataBytes, clientDataJSON),
+		);
+		validSignature = verifyECDSASignature(ecdsaPublicKey, hash, ecdsaSignature);
+	} else if (credential.algorithm === coseAlgorithmRS256) {
+		const rsaPublicKey = decodePKCS1RSAPublicKey(credential.publicKey);
+		const hash = sha256(
+			createAssertionSignatureMessage(authenticatorDataBytes, clientDataJSON),
+		);
+		validSignature = verifyRSASSAPKCS1v15Signature(
+			rsaPublicKey,
+			sha256ObjectIdentifier,
+			hash,
+			signatureBytes,
+		);
+	} else {
+		throw createError({
+			message: "Internal error",
+			statusCode: 500,
+		});
+	}
+
+	if (!validSignature) {
+		throw createError({
+			message: "Invalid data",
+			statusCode: 400,
+		});
+	}
+
+	setSessionAs2FAVerified(session.id, true);
+	return {
+		message: "Passkey verification successful",
 		redirectUrl: "/",
 	};
 }

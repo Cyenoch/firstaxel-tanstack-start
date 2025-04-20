@@ -1,4 +1,4 @@
-import { useAppForm } from "@/hooks/demo.form";
+import { useAppForm } from "@/hooks/form";
 import { verifyUser as verifyUserSchema } from "@/schema/auth/user";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";

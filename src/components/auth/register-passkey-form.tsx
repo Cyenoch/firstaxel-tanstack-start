@@ -1,7 +1,8 @@
 import { registerPasskeyAction } from "@/actions/passkey";
 import type { users } from "@/database/drizzle";
 import { env } from "@/env";
-import { useAppForm } from "@/hooks/demo.form";
+import { useAppForm } from "@/hooks/form";
+import Passkey from "@/icons/passkey.svg";
 import { createChallenge } from "@/lib/auth/client/webauthn";
 import {
 	createPasskeySchema,
@@ -14,7 +15,6 @@ import { createServerFn, useServerFn } from "@tanstack/react-start";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import Passkey from "/passkey.svg?url";
 import { Button } from "../ui/button";
 import {
 	Card,
@@ -23,6 +23,11 @@ import {
 	CardHeader,
 	CardTitle,
 } from "../ui/card";
+
+const createChallengeAction = createServerFn().handler(async () => {
+	const challenge = await createChallenge();
+	return challenge;
+});
 
 const registerPasskey = createServerFn({
 	method: "POST",
@@ -69,7 +74,7 @@ const RegisterUserPasskeyForm = ({
 				{ data: value },
 				{
 					onSuccess: (data) => {
-						toast.success("Passkey created successfully");
+						toast.success(data.message);
 						if (data?.redirectUrl) {
 							navigate({
 								to: data?.redirectUrl,
@@ -106,10 +111,10 @@ const RegisterUserPasskeyForm = ({
 						className="w-full"
 						size={"lg"}
 						onClick={async () => {
-							const challenge = await createChallenge();
+							const challenge = await createChallengeAction();
 							const credential = await navigator.credentials.create({
 								publicKey: {
-									challenge,
+									challenge: decodeBase64(challenge),
 									user: {
 										displayName: user.firstname as string,
 										id: decodeBase64(encodedCredentialUserId),

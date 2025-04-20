@@ -17,6 +17,8 @@ export const env = createEnv({
 		VITE_APP_TITLE: z.string().min(1).optional(),
 		VITE_CONVEX_URL: z.string().url(),
 		VITE_APP_NAME: z.string().min(1).optional(),
+
+		VITE_VERCEL_URL: z.string().min(1).optional(),
 	},
 
 	/**

@@ -47,6 +47,7 @@ export async function validateSessionToken(
 	}
 	if (Date.now() >= session.expiresAt.getTime()) {
 		await db.delete(sessions).where(eq(sessions.id, session.id));
+		deleteSessionTokenCookie();
 		return { session: null, user: null };
 	}
 	if (user === null) {

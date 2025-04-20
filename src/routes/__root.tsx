@@ -17,6 +17,7 @@ import { ThemeProvider, useTheme } from "@/providers/theme-provider";
 import type { QueryClient } from "@tanstack/react-query";
 
 import { Toaster } from "@/components/ui/sonner";
+import Providers from "@/providers";
 import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import type { TRPCRouter } from "../integrations/trpc/router";
 
@@ -73,9 +74,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				{children}
-				<Scripts />
-				<Toaster richColors />
+				<Providers>
+					{children}
+					<Scripts />
+					<Toaster richColors />
+				</Providers>
 			</body>
 		</html>
 	);

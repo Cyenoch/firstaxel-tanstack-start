@@ -1,5 +1,4 @@
 import RegisterUserPasskeyForm from "@/components/auth/register-passkey-form";
-import { get2FARedirect } from "@/lib/auth/server/2fa";
 import { getCurrentSession } from "@/lib/auth/server/session";
 import { hashUserId } from "@/lib/auth/server/utils";
 import { getUserPasskeyCredentials } from "@/lib/auth/server/webauthn";
@@ -20,11 +19,7 @@ const getUserPasskeyDetails = createServerFn({}).handler(async () => {
 			to: "/auth/verify-email",
 		});
 	}
-	if (user.registered2FA && !session.twoFactorVerified) {
-		throw redirect({
-			to: get2FARedirect(user),
-		});
-	}
+
 	const credentials = await getUserPasskeyCredentials(user.id);
 
 	const credentialUserId = new Uint8Array(8);

@@ -1,4 +1,4 @@
-import { useAppForm } from "@/hooks/demo.form";
+import { useAppForm } from "@/hooks/form";
 import { loginUser as loginUserSchema, passKeyData } from "@/schema/auth/user";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "../ui/button";
@@ -31,11 +31,12 @@ import {
 } from "@oslojs/webauthn";
 import { ObjectParser } from "@pilcrowjs/object-parser";
 
-import { decryptToString } from "@/lib/auth/server/encryption";
+import { env } from "@/env";
 import {
 	getPasskeyCredential,
 	verifyWebAuthnChallenge,
 } from "@/lib/auth/server/webauthn";
+import { getBaseUrl, getDeployer } from "@/lib/utils";
 import {
 	decodePKCS1RSAPublicKey,
 	sha256ObjectIdentifier,
@@ -170,7 +171,7 @@ const loginWithPasskeyAction = createServerFn()
 			};
 		}
 		// TODO: Update host
-		if (!authenticatorData.verifyRelyingPartyIdHash("localhost")) {
+		if (!authenticatorData.verifyRelyingPartyIdHash(getDeployer())) {
 			setResponseStatus(422);
 			return {
 				message: "Invalid data",
@@ -206,7 +207,7 @@ const loginWithPasskeyAction = createServerFn()
 			};
 		}
 		// TODO: Update origin
-		if (clientData.origin !== "http://localhost:3000") {
+		if (clientData.origin !== getBaseUrl()) {
 			setResponseStatus(422);
 			return {
 				message: "Invalid data",
@@ -219,9 +220,7 @@ const loginWithPasskeyAction = createServerFn()
 			};
 		}
 
-		const credential = await getPasskeyCredential(
-			decryptToString(credentialId),
-		);
+		const credential = await getPasskeyCredential(credentialId);
 		if (credential === null) {
 			setResponseStatus(401);
 			return {
