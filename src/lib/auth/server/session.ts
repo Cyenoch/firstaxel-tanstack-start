@@ -5,6 +5,7 @@ import {
 	encodeBase32LowerCaseNoPadding,
 	encodeHexLowerCase,
 } from "@oslojs/encoding";
+import { serverOnly } from "@tanstack/react-start";
 import {
 	deleteCookie,
 	getCookie,
@@ -68,7 +69,7 @@ export async function validateSessionToken(
 	return { session, user };
 }
 
-export const getCurrentSession = async (): Promise<SessionValidationResult> => {
+export const getCurrentSession = serverOnly(async (): Promise<SessionValidationResult> => {
 	const token = getCookie("session");
 
 	if (!token) {
@@ -76,7 +77,7 @@ export const getCurrentSession = async (): Promise<SessionValidationResult> => {
 	}
 	const result = await validateSessionToken(token as string);
 	return result;
-};
+});
 
 export async function invalidateSession(sessionId: string): Promise<void> {
 	await db.delete(sessions).where(eq(sessions.id, sessionId));
@@ -127,18 +128,18 @@ export async function setSessionAs2FAVerified(
 		.where(eq(sessions.id, sessionId));
 }
 
-export async function setSessionTokenCookie(
+export const setSessionTokenCookie = serverOnly((
 	token: string,
 	expiresAt: Date,
-): Promise<void> {
+) => {
 	setCookie("session", token, {
 		expires: expiresAt,
 	});
-}
+})
 
-export async function deleteSessionTokenCookie(): Promise<void> {
+export const deleteSessionTokenCookie = serverOnly(() => {
 	deleteCookie("session");
-}
+})
 
 export interface SessionFlags {
 	twoFactorVerified: boolean;
